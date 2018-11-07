@@ -38,9 +38,12 @@ void setup() {
 
 String ascii2morse (String s) {
   String translation;
-  for (int i = 0; i < s.length(); i++){
-    translation += "/";
+  int lengthOfString = s.length();
+  for (int i = 0; i < lengthOfString; i++){
     translation += char2morse(s[i]);
+    if (i < (lengthOfString - 1)) { // checks if end of string
+      translation += "/";
+    }
   }
   return translation;
 }
