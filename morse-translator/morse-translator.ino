@@ -1,3 +1,6 @@
+#define ledPin 5
+#define potentiometer A0
+
 char morse_a[] = ".-";
 char morse_b[] = "-...";
 char morse_c[] = "-.-.";
@@ -27,13 +30,48 @@ char morse_z[] = "--..";
 
 void setup() {
   Serial.begin(9600);
-  Serial.println(char2morse('s'));
-  Serial.println(char2morse('o'));
-  Serial.println(char2morse('E'));
-  Serial.println(char2morse('T'));
-  Serial.println(char2morse(' '));
-  Serial.println(char2morse('&'));
-  Serial.println(ascii2morse("sos"));
+  pinMode(ledPin, OUTPUT);
+  String morseMessage = "so";
+  Serial.println(morseMessage);
+  String morse = ascii2morse(morseMessage);
+  Serial.println(morse);
+  sendDigital(ledPin, morse);
+  
+  //Serial.println(char2morse('s'));
+  //Serial.println(char2morse('o'));
+  //Serial.println(char2morse('E'));
+  //Serial.println(char2morse('T'));
+  //Serial.println(char2morse(' '));
+  //Serial.println(char2morse('&'));
+  //Serial.println(ascii2morse("sos"));
+}
+
+void sendDigital(int p, String message){
+  
+  for (int i = 0; i < message.length(); i++) {
+    Serial.println(message[i]);
+    switch(message[i]){
+      case '.':
+        digitalWrite(p, HIGH);
+        delay(500);
+        digitalWrite(p, LOW);
+        delay(500);
+        break;
+      case '-':
+        digitalWrite(p, HIGH);
+        delay(3000);
+        digitalWrite(p, LOW);
+        delay(500);
+        break;
+      case ' ':
+        delay(3000);
+        break;
+      case '/':
+        delay(7000);
+        break;
+    }
+  }
+  
 }
 
 String ascii2morse (String s) {
