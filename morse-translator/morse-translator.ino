@@ -1,5 +1,6 @@
 #define ledPin 5
 #define potentiometer A0
+#define audPin A2
 #define DEBUG 0
 
 char morse_a[] = ".-";
@@ -33,12 +34,17 @@ int dotLength;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(ledPin, OUTPUT);
+  //pinMode(ledPin, OUTPUT);
+  pinMode(audPin, OUTPUT);
+  pinMode(potentiometer, INPUT);
+  
   String morseMessage = "so";
   Serial.println(morseMessage);
   String morse = ascii2morse(morseMessage);
   Serial.println(morse);
-  sendDigital(ledPin, morse);
+  
+  //sendDigital(ledPin, morse);
+  sendAnalog(audPin, morse);
   
   //Serial.println(char2morse('s'));
   //Serial.println(char2morse('o'));
@@ -49,9 +55,46 @@ void setup() {
   //Serial.println(ascii2morse("sos"));
 }
 
+void sendAnalog (int pin, String message) {
+  int dot1 = 500;
+  int freq = 440;
+  int potVal = analogRead(potentiometer);
+
+  if (potVal < 250) {
+    dotLength = 500;
+  } else if (potVal < 750) {
+    dotLength = 1000;
+  } else {
+    dotLength = 1500;
+  }
+
+  for (int i = 0; i < message.length(); i++) {
+
+    switch(message[i]){
+      case '.':
+        tone(pin, freq);
+        delay(dotLength);
+        noTone(pin);
+        delay(dotLength);
+        break;
+      case '-':
+        tone(pin, freq);
+        delay(dotLength * 3);
+        noTone(pin);
+        delay(dotLength);
+        break;
+      case ' ':
+        delay(dotLength * 3);
+        break;
+      case '/':
+        delay(dotLength * 7);
+        break;
+    }
+  }
+}
+
 void sendDigital(int p, String message){
     
-  pinMode(potentiometer, INPUT);
   int potVal = analogRead(potentiometer);
   
   if (potVal < 250) {
