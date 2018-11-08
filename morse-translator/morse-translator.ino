@@ -1,5 +1,6 @@
 #define ledPin 5
 #define potentiometer A0
+#define DEBUG 0
 
 char morse_a[] = ".-";
 char morse_b[] = "-...";
@@ -28,6 +29,8 @@ char morse_x[] = "-..-";
 char morse_y[] = "-.--";
 char morse_z[] = "--..";
 
+int dotLength;
+
 void setup() {
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
@@ -47,27 +50,43 @@ void setup() {
 }
 
 void sendDigital(int p, String message){
+    
+  pinMode(potentiometer, INPUT);
+  int potVal = analogRead(potentiometer);
+  
+  if (potVal < 250) {
+    dotLength = 500;
+  } else if (potVal < 750) {
+    dotLength = 1000;
+  } else {
+    dotLength = 1500;
+  }
+
+  #if DEBUG == 1
+  Serial.println(potVal);
+  Serial.println(dotLength);
+  #endif
   
   for (int i = 0; i < message.length(); i++) {
-    Serial.println(message[i]);
+
     switch(message[i]){
       case '.':
         digitalWrite(p, HIGH);
-        delay(500);
+        delay(dotLength);
         digitalWrite(p, LOW);
-        delay(500);
+        delay(dotLength);
         break;
       case '-':
         digitalWrite(p, HIGH);
-        delay(3000);
+        delay(dotLength * 3);
         digitalWrite(p, LOW);
-        delay(500);
+        delay(dotLength);
         break;
       case ' ':
-        delay(3000);
+        delay(dotLength * 3);
         break;
       case '/':
-        delay(7000);
+        delay(dotLength * 7);
         break;
     }
   }
