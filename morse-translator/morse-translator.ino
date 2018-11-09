@@ -30,8 +30,6 @@ char morse_x[] = "-..-";
 char morse_y[] = "-.--";
 char morse_z[] = "--..";
 
-int dotLength;
-
 void setup() {
   Serial.begin(9600);
   //pinMode(ledPin, OUTPUT);
@@ -55,18 +53,21 @@ void setup() {
   //Serial.println(ascii2morse("sos"));
 }
 
+int getPotVal(){
+  int potVal = analogRead(potentiometer);
+  if (potVal < 250) {
+    return 500;
+  } else if (potVal < 750) {
+    return 1000;
+  } else {
+    return 1500;
+  }
+}
+
 void sendAnalog (int pin, String message) {
   int dot1 = 500;
   int freq = 440;
-  int potVal = analogRead(potentiometer);
-
-  if (potVal < 250) {
-    dotLength = 500;
-  } else if (potVal < 750) {
-    dotLength = 1000;
-  } else {
-    dotLength = 1500;
-  }
+  int dotLength = getPotVal();
 
   for (int i = 0; i < message.length(); i++) {
 
@@ -94,16 +95,8 @@ void sendAnalog (int pin, String message) {
 }
 
 void sendDigital(int p, String message){
-    
-  int potVal = analogRead(potentiometer);
-  
-  if (potVal < 250) {
-    dotLength = 500;
-  } else if (potVal < 750) {
-    dotLength = 1000;
-  } else {
-    dotLength = 1500;
-  }
+
+  int dotLength = getPotVal();
 
   #if DEBUG == 1
   Serial.println(potVal);
