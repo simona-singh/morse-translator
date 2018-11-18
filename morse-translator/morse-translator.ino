@@ -49,8 +49,14 @@ void setup() {
 
   if (isText) {
     Serial.println("Translating text to Morse...");
+    translation = ascii2morse(message);
+    Serial.println("Translation: " + translation);
+    sendDigital(ledPin, translation);
+    //sendAnalog(audPin, translation);
   } else {
     Serial.println("Translating Morse to text...");
+    translation = morse2ascii(message);
+    Serial.println("Translation: " + translation);
   }
 }
 
@@ -66,6 +72,86 @@ String promptReadIn(String s) {
   Serial.print(s);
   while (!Serial.available()) {};
   return Serial.readString();
+}
+
+String morse2ascii(String m) {
+  String translation;
+  String toTranslate;
+  int lengthOfString = m.length();
+  for (int i = 0; i < lengthOfString; i++){
+    if (m[i] == '/' || m[i] == ' ') {
+      translation += morse2char(toTranslate);
+      if (m[i] == ' ') {
+        translation += ' ';
+      }
+      toTranslate = "";
+    } else {
+      toTranslate += m[i];
+    }
+  }
+  translation += morse2char(toTranslate);
+  return translation;
+}
+
+char morse2char(String m) {
+  if (m == ".-") {
+    return 'a';
+  } else if (m == "-...") {
+    return 'b';
+  } else if (m == "-.-.") {
+    return 'c';
+  } else if (m == "-..") {
+    return 'd';
+  } else if (m == "."){
+    return 'e';
+  } else if (m == "..-.") {
+    return 'f';
+  } else if (m == "--.") {
+    return 'g';
+  } else if (m == "....") {
+    return 'h';
+  } else if (m == "..") {
+    return 'i';
+  } else if (m == ".---") {
+    return 'j';
+  } else if (m == "-.-") {
+    return 'k';
+  } else if (m == ".-..") {
+    return 'l';
+  } else if (m == "--") {
+    return 'm';
+  } else if (m == "-.") {
+    return 'n';
+  } else if (m == "---") {
+    return 'o';
+  } else if (m == ".--.") {
+    return 'p';
+  } else if (m == "--.-") {
+    return 'q';
+  } else if (m == ".-.") {
+    return 'r';
+  } else if (m == "...") {
+    return 's';
+  } else if (m == "-") {
+    return 't';
+  } else if (m == "..-") {
+    return 'u';
+  } else if (m == "...-") {
+    return 'v';
+  } else if (m == ".--") {
+    return 'w';
+  } else if (m == "-..-") {
+    return 'x';
+  } else if (m == "-.--") {
+    return 'y';
+  } else if (m == "--..") {
+    return 'z';
+  } else if (m == " ") {
+    return ' ';
+  } else {
+    return '?';
+  }
+  
 }
 
 int getPotVal(){
