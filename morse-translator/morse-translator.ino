@@ -1,3 +1,4 @@
+
 #define ledPin 5
 #define potentiometer A0
 #define audPin A2
@@ -29,28 +30,42 @@ char morse_w[] = ".--";
 char morse_x[] = "-..-";
 char morse_y[] = "-.--";
 char morse_z[] = "--..";
+char morse_space[] = " ";
+char morse_error[] = "........";
 
 void setup() {
   Serial.begin(9600);
-  //pinMode(ledPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
   pinMode(audPin, OUTPUT);
   pinMode(potentiometer, INPUT);
-  
-  String morseMessage = "so";
-  Serial.println(morseMessage);
-  String morse = ascii2morse(morseMessage);
-  Serial.println(morse);
-  
-  //sendDigital(ledPin, morse);
-  sendAnalog(audPin, morse);
-  
-  //Serial.println(char2morse('s'));
-  //Serial.println(char2morse('o'));
-  //Serial.println(char2morse('E'));
-  //Serial.println(char2morse('T'));
-  //Serial.println(char2morse(' '));
-  //Serial.println(char2morse('&'));
-  //Serial.println(ascii2morse("sos"));
+
+  String message;
+  bool isText;
+  String translation;
+
+  message = promptReadIn("Enter message: ");
+  Serial.println(message);
+  isText = checkMessageType(message[0]);
+
+  if (isText) {
+    Serial.println("Translating text to Morse...");
+  } else {
+    Serial.println("Translating Morse to text...");
+  }
+}
+
+bool checkMessageType(char m){
+  if (m == '.' || m == '-') {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+String promptReadIn(String s) {
+  Serial.print(s);
+  while (!Serial.available()) {};
+  return Serial.readString();
 }
 
 int getPotVal(){
@@ -222,10 +237,10 @@ char * char2morse(char c) {
       return morse_z;
       break;
     case ' ':
-      return " ";
+      return morse_space;
       break;
     default:
-      return "........";
+      return morse_error;
       break;
   }
 }
